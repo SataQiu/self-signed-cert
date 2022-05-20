@@ -23,7 +23,7 @@ var RootCmd = &cobra.Command{
 var (
 	namespace string
 	service   string
-	output    string
+	certDir   string
 )
 
 func init() {
@@ -31,19 +31,14 @@ func init() {
 		"Namespace in which the service resides into.")
 	RootCmd.Flags().StringVar(&service, "service-name", "",
 		"Service for which to generate the certificate.")
-	RootCmd.Flags().StringVar(&output, "output", "",
-		"Output dir path.")
+	RootCmd.Flags().StringVar(&certDir, "cert-dir", "",
+		"Output cert dir.")
 	RootCmd.MarkFlagRequired("namespace")
 	RootCmd.MarkFlagRequired("service-name")
 }
 
 // Source inspired by: https://github.com/kubernetes/kubernetes/blob/v1.21.1/test/e2e/apimachinery/certs.go.
 func setupServerCert(namespaceName, serviceName string) {
-	certDir, err := ioutil.TempDir("", "self-signed-certificate")
-	if err != nil {
-		log.Fatalf("Failed to create a temp dir for cert generation %v", err)
-	}
-
 	signingKey, err := utils.NewPrivateKey()
 	if err != nil {
 		log.Fatalf("Failed to create CA private key %v", err)
@@ -54,7 +49,7 @@ func setupServerCert(namespaceName, serviceName string) {
 		log.Fatalf("Failed to create CA cert for apiserver %v", err)
 	}
 
-	caCertFile := filepath.Join(certDir, filepath.Join(output, "ca.crt"))
+	caCertFile := filepath.Join(certDir, "ca.crt")
 
 	if err := ioutil.WriteFile(caCertFile, utils.EncodeCertPEM(signingCert), 0644); err != nil {
 		log.Fatalf("Failed to write CA cert %v", err)
@@ -78,8 +73,8 @@ func setupServerCert(namespaceName, serviceName string) {
 		log.Fatalf("Failed to create cert%v", err)
 	}
 
-	certFile := filepath.Join(certDir, filepath.Join(output, "server.crt"))
-	keyFile := filepath.Join(certDir, filepath.Join(output, "server.key"))
+	certFile := filepath.Join(certDir, "server.crt")
+	keyFile := filepath.Join(certDir, "server.key")
 
 	if err = ioutil.WriteFile(certFile, utils.EncodeCertPEM(signedCert), 0600); err != nil {
 		log.Fatalf("Failed to write cert file %v", err)
