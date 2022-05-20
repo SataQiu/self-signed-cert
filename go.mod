@@ -55,7 +55,7 @@ replace k8s.io/sample-cli-plugin => k8s.io/sample-cli-plugin v0.21.0
 replace k8s.io/sample-controller => k8s.io/sample-controller v0.21.0
 
 require (
-	github.com/spf13/cobra v1.1.1 // indirect
-	k8s.io/client-go v0.21.0 // indirect
-	k8s.io/kubernetes v1.21.0 // indirect
+	github.com/spf13/cobra v1.1.1
+	k8s.io/client-go v0.21.0
+	k8s.io/kubernetes v1.21.0
 )

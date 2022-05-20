@@ -23,6 +23,7 @@ var RootCmd = &cobra.Command{
 var (
 	namespace string
 	service   string
+	output    string
 )
 
 func init() {
@@ -30,6 +31,8 @@ func init() {
 		"Namespace in which the service resides into.")
 	RootCmd.Flags().StringVar(&service, "service-name", "",
 		"Service for which to generate the certificate.")
+	RootCmd.Flags().StringVar(&output, "output", "",
+		"Output dir path.")
 	RootCmd.MarkFlagRequired("namespace")
 	RootCmd.MarkFlagRequired("service-name")
 }
@@ -51,7 +54,7 @@ func setupServerCert(namespaceName, serviceName string) {
 		log.Fatalf("Failed to create CA cert for apiserver %v", err)
 	}
 
-	caCertFile := filepath.Join(certDir, "ca.crt")
+	caCertFile := filepath.Join(certDir, filepath.Join(output, "ca.crt"))
 
 	if err := ioutil.WriteFile(caCertFile, utils.EncodeCertPEM(signingCert), 0644); err != nil {
 		log.Fatalf("Failed to write CA cert %v", err)
@@ -75,8 +78,8 @@ func setupServerCert(namespaceName, serviceName string) {
 		log.Fatalf("Failed to create cert%v", err)
 	}
 
-	certFile := filepath.Join(certDir, "server.crt")
-	keyFile := filepath.Join(certDir, "server.key")
+	certFile := filepath.Join(certDir, filepath.Join(output, "server.crt"))
+	keyFile := filepath.Join(certDir, filepath.Join(output, "server.key"))
 
 	if err = ioutil.WriteFile(certFile, utils.EncodeCertPEM(signedCert), 0600); err != nil {
 		log.Fatalf("Failed to write cert file %v", err)
