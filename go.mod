@@ -1,4 +1,4 @@
-module github.com/surajssd/self-signed-cert
+module github.com/SataQiu/self-signed-cert
 
 go 1.16
 
